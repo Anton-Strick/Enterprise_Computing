@@ -8,7 +8,6 @@
 */
 
 
-
 public class Station implements Runnable {
 
     private Conveyor input;
@@ -21,17 +20,13 @@ public class Station implements Runnable {
     }
 
     public void run() {
-        while (workload > 0) {
-            if (!doWork()) {
-                try {
-                    wait(100);
-                }
+        displayReport();
 
-                catch (InterruptedException ex) {
-                    System.out.println();
-                }
-            }
+        while (workload > 0) {
+            doWork();
         }
+
+        shutdown();
     }
 
     public int getID() {
@@ -40,34 +35,63 @@ public class Station implements Runnable {
 
     public void setInput(Conveyor c) {
         this.input = c;
+        
+    }
+
+    public void displayReport() {
         System.out.println("Routing Station " + this.stationID + ": Input connection "
                            + "is set to conveyor number C" + this.input.getID() + ".");
-    }
 
-    public void setOutput(Conveyor c) {
-        this.output = c;
         System.out.println("Routing Station " + this.stationID + ": Output connection "
                            + "is set to conveyor number C" + this.output.getID() + ".");
-    }
 
-    public void setWorkload(int w) {
-        this.workload = w;
         System.out.println("Routing Station " + this.stationID + ": Workload set. "
                            + "Station " + this.stationID + " has a total of "
                            + this.workload + " package groups to move.");
     }
 
+    public void setOutput(Conveyor c) {
+        this.output = c;
+    }
+
+    public void setWorkload(int w) {
+        this.workload = w;
+    }
+
+    private boolean getLocks() {
+        return true;
+    }
+
     private boolean doWork() {
         try {
-            wait(100);
+            input.load(this);
         }
-        catch (Exception ex) {}
+
+        catch (Exception ex) {
+
+        }
+
+        try {
+            output.unload(this);
+        }
+
+        catch (Exception ex) {
+            System.out.println("Station " + stationID + ": Unable to lock output "
+                               + "conveyor C " + this.output.getID() 
+                               + " - releasing lock on input conveyor C" 
+                               + this.input.getID() + ".");
+        }
 
         workload--;
         
         System.out.println("Routing Station " + stationID + ": Number of package " 
                            + "groups left to move is: " + workload + ".");
         return true;
+    }
+
+    private void shutdown() {
+        System.out.println("* *Station " + stationID + ": Workload successfully "
+                           + "completed. * * Going Idle!");
     }
 
 }

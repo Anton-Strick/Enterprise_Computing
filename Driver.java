@@ -13,6 +13,8 @@
 */
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.io.*;
 
 public class Driver {
@@ -21,11 +23,13 @@ public class Driver {
                     line in config.txt (ArrayList)
 
         stations  - contains n instances of the Stations class. n is defined in the first
-                    line in config.txt (ArrayList)
+                    line in config.txt. (ArrayList)
         
 */
     private ArrayList<Conveyor> conveyors = new ArrayList<Conveyor>();
     private ArrayList<Station> stations = new ArrayList<Station>();
+
+    private ExecutorService threads = Executors.newCachedThreadPool();
 
     private File configFile;
 
@@ -46,8 +50,13 @@ public class Driver {
     }
 
     public Driver (String configDirectory) {
-        //------------------------ Start Sim ----------------------- 
+        //------------------------ Load Config ----------------------- 
         loadConfig(configDirectory);
+
+        //--------------------- Start Simulation ---------------------
+        for (Station s : stations) {
+            threads.execute(s);
+        }
     }
 //==================================== End Public Methods ====================================
 
@@ -90,8 +99,6 @@ public class Driver {
                 currStation.setInput(currInput);
                 currStation.setOutput(currOutput);
                 currStation.setWorkload(scan.nextInt());
-
-                currStation.run();
             }
             
             scan.close();
