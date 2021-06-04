@@ -29,6 +29,16 @@ public class Conveyor {
         return this.conveyorID;
     }
 
+    public boolean getLoadLock(Station station) {
+        lock.lock();
+        return true;
+    }
+
+    public boolean releaseLoadLock(Station station) {
+        lock.unlock();
+        return true;
+    }
+
     public boolean load(Station station) {
         try {
             System.out.println("Routing Station " + this.stationID + ": ...Active..."
@@ -44,14 +54,13 @@ public class Conveyor {
 
     public boolean unload(Station station) {
         try {
-            canUnload.await();
             System.out.println("Routing Station " + this.stationID + ": ...Active..."
                                + " moving packages out of station on output conveyor"
                                + " C" + this.conveyorID + ".");
             return true;
         }
 
-        catch (InterruptedException ex) {
+        catch (Exception ex) {
             return false;
         }
     }

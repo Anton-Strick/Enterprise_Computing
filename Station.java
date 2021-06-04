@@ -59,6 +59,7 @@ public class Station implements Runnable {
     }
 
     private boolean getLocks() {
+        
         return true;
     }
 
