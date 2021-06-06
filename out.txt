@@ -1,0 +1,97 @@
+Routing Station 0: Input connection is set to conveyor number C2.
+Routing Station 0: Output connection is set to conveyor number C0.
+Routing Station 0: Workload set. Station 0 has a total of 2 package groups to move.
+Routing Station 2: Input connection is set to conveyor number C1.
+Routing Station 1: Input connection is set to conveyor number C0.
+Routing Station 2: Output connection is set to conveyor number C2.
+Routing Station 0: LOCK ACQUIRED! Now holding lock on input conveyor C2.
+Routing Station 2: Workload set. Station 2 has a total of 4 package groups to move.
+Routing Station 1: Output connection is set to conveyor number C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 0: LOCK ACQUIRED! Now holding lock on output conveyor C0.
+Routing Station 2: Unable to lock output conveyor C2 - releasing lock on input conveyor C1.
+Routing Station 0: ...Active... moving packages into station on input conveyor C2.
+Routing Station 1: Workload set. Station 1 has a total of 3 package groups to move.
+Routing Station 0: ...Active... moving packages out of station on output conveyor C0.
+Routing Station 0: Number of package groups left to move is: 1.
+
+Station 0: Unlocks output conveyor C0.
+Station 0: Unlocks input conveyor C2.
+Routing Station 0: LOCK ACQUIRED! Now holding lock on input conveyor C2.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on input conveyor C0.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on output conveyor C1.
+Routing Station 0: Unable to lock output conveyor C0 - releasing lock on input conveyor C2.
+Routing Station 1: ...Active... moving packages into station on input conveyor C0.
+Routing Station 1: ...Active... moving packages out of station on output conveyor C1.
+Routing Station 1: Number of package groups left to move is: 2.
+
+Station 1: Unlocks output conveyor C1.
+Station 1: Unlocks input conveyor C0.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on input conveyor C0.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on output conveyor C2.
+Routing Station 2: ...Active... moving packages into station on input conveyor C1.
+Routing Station 1: Unable to lock output conveyor C1 - releasing lock on input conveyor C0.
+Routing Station 2: ...Active... moving packages out of station on output conveyor C2.
+Routing Station 2: Number of package groups left to move is: 3.
+
+Station 2: Unlocks output conveyor C2.
+Station 2: Unlocks input conveyor C1.
+Routing Station 0: LOCK ACQUIRED! Now holding lock on input conveyor C2.
+Routing Station 0: LOCK ACQUIRED! Now holding lock on output conveyor C0.
+Routing Station 0: ...Active... moving packages into station on input conveyor C2.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: Unable to lock output conveyor C2 - releasing lock on input conveyor C1.
+Routing Station 0: ...Active... moving packages out of station on output conveyor C0.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: Unable to lock output conveyor C2 - releasing lock on input conveyor C1.
+Routing Station 0: Number of package groups left to move is: 0.
+
+Station 0: Unlocks output conveyor C0.
+Station 0: Unlocks input conveyor C2.
+* * Station 0: Workload successfully completed. * * Going Idle!
+
+Routing Station 1: LOCK ACQUIRED! Now holding lock on input conveyor C0.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on output conveyor C1.
+Routing Station 1: ...Active... moving packages into station on input conveyor C0.
+Routing Station 1: ...Active... moving packages out of station on output conveyor C1.
+Routing Station 1: Number of package groups left to move is: 1.
+
+Station 1: Unlocks output conveyor C1.
+Station 1: Unlocks input conveyor C0.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on input conveyor C0.
+Routing Station 1: LOCK ACQUIRED! Now holding lock on output conveyor C1.
+Routing Station 1: ...Active... moving packages into station on input conveyor C0.
+Routing Station 1: ...Active... moving packages out of station on output conveyor C1.
+Routing Station 1: Number of package groups left to move is: 0.
+
+Station 1: Unlocks output conveyor C1.
+Station 1: Unlocks input conveyor C0.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on output conveyor C2.
+Routing Station 2: ...Active... moving packages into station on input conveyor C1.
+* * Station 1: Workload successfully completed. * * Going Idle!
+
+Routing Station 2: ...Active... moving packages out of station on output conveyor C2.
+Routing Station 2: Number of package groups left to move is: 2.
+
+Station 2: Unlocks output conveyor C2.
+Station 2: Unlocks input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on output conveyor C2.
+Routing Station 2: ...Active... moving packages into station on input conveyor C1.
+Routing Station 2: ...Active... moving packages out of station on output conveyor C2.
+Routing Station 2: Number of package groups left to move is: 1.
+
+Station 2: Unlocks output conveyor C2.
+Station 2: Unlocks input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on input conveyor C1.
+Routing Station 2: LOCK ACQUIRED! Now holding lock on output conveyor C2.
+Routing Station 2: ...Active... moving packages into station on input conveyor C1.
+Routing Station 2: ...Active... moving packages out of station on output conveyor C2.
+Routing Station 2: Number of package groups left to move is: 0.
+
+Station 2: Unlocks output conveyor C2.
+Station 2: Unlocks input conveyor C1.
+* * Station 2: Workload successfully completed. * * Going Idle!
+

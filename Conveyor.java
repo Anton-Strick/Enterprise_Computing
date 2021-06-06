@@ -7,61 +7,48 @@
     Class: Conveyor
 */
 
+import java.util.Random;
 import java.util.concurrent.locks.*;
 
 public class Conveyor {
-    
-    private boolean inUse;
     private int conveyorID;
     private int stationID;
 
     private Lock lock = new ReentrantLock();
-    private Condition canLoad = lock.newCondition();
-    private Condition canUnload = lock.newCondition();
-    
+    private Random generator = new Random();
 
     public Conveyor(int id) {
         conveyorID = id;
-        inUse = false;
     }
 
     public int getID() {
         return this.conveyorID;
     }
-
-    public boolean getLoadLock(Station station) {
-        lock.lock();
-        return true;
+    public int getStation() {
+        return stationID;
     }
 
-    public boolean releaseLoadLock(Station station) {
+    public boolean getLock() {
+        return lock.tryLock();
+    }
+
+    public void releaseLock() {
         lock.unlock();
-        return true;
     }
 
-    public boolean load(Station station) {
+    public void load() {
         try {
-            System.out.println("Routing Station " + this.stationID + ": ...Active..."
-                               + " moving packages into station on input conveyor "
-                               + "C" + this.conveyorID + ".");
-            return true;
+            Thread.sleep(generator.nextInt(100));
         }
 
-        catch (Exception ex) { 
-            return false; 
-        }
+        catch (Exception ex) {}
     }
 
-    public boolean unload(Station station) {
+    public void unload() {
         try {
-            System.out.println("Routing Station " + this.stationID + ": ...Active..."
-                               + " moving packages out of station on output conveyor"
-                               + " C" + this.conveyorID + ".");
-            return true;
+            Thread.sleep(generator.nextInt(100));
         }
 
-        catch (Exception ex) {
-            return false;
-        }
+        catch (Exception ex) {}
     }
 }

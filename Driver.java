@@ -5,25 +5,30 @@
     Date: June 6, 2021
 
     Class: Driver
-    Description: Driver.java contains code responsible for FileIO and high-level
-                 control of the simulated factory floor as outlined in project1.pdf.
-                 The scale of a Driver instance is variable, containing n instances of
-                 the Stations class, and n-1 instances of the Conveyor class. n is defined
-                 as the number found on the first line of config.txt
+    Description: Driver.java contains code responsible for FileIO and high-level control
+                 of the simulated factory floor as outlined in project1.pdf. The Scale of
+                 a Driver instance is variable, containing n instances of the Stations
+                 class, and n-1 instances of the Conveyor class. n is defined as the number
+                 found on the first line of config.txt
 */
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.io.*;
 
 public class Driver {
-/*===================================== Class Variables =====================================      
-        conveyors - contains n instances of the Conveyor class. n is defined in the first
-                    line in config.txt (ArrayList)
+/*====================================== Class Variables =====================================
+        conveyors  - contains n instances of the Conveyor class. n is defined in the 
+                     first line in config.txt (ArrayList)
+        stations   - contains n instances of the Stations class. n is defined in the 
+                     first line in config.txt. (ArrayList)
+        
+        threads    - used in an enhanced for loop to run all generated instances of
+                     Station. (ExecutorService)
 
-        stations  - contains n instances of the Stations class. n is defined in the first
-                    line in config.txt. (ArrayList)
+        configFile - a file containing n + 1 integers separated by newline characters.
+                     n is defined as the integer on line 0, each following line
+                     contains the workload for stations[line - 1]
         
 */
     private ArrayList<Conveyor> conveyors = new ArrayList<Conveyor>();
@@ -33,22 +38,16 @@ public class Driver {
 
     private File configFile;
 
-//=================================== End Class Variables ====================================
+//=================================== End Class Variables ==================================//
 
-/*====================================== Public Methods ======================================
-        main      - contains code regarding class variable init and fileIO
-                    INPUTS : String[] args
-                    RETURNS: VOID
-        
-        getOutput - 
-                    INPUTS : int outputID
-                    RETURNS: String
-*/
-
+/*======================================= Base Methods =====================================*/
     public static void main(String[] args) {
         new Driver("config.txt");
     }
-
+/**
+ * Runs simulation based on provided config when instantiated.
+ * @param configDirectory Directory of desired configFile
+ */
     public Driver (String configDirectory) {
         //------------------------ Load Config ----------------------- 
         loadConfig(configDirectory);
@@ -57,20 +56,18 @@ public class Driver {
         for (Station s : stations) {
             threads.execute(s);
         }
+
+        //--------------------- Proper Shutdown ----------------------
+        threads.shutdown();
     }
-//==================================== End Public Methods ====================================
+//===================================== End Base Methods ===================================//
 
-/*====================================== Private Methods =====================================
-        loadConfig   - loads input config contained with config.txt and creates the n stations
-                       and conveyors detailed within.
-                       INPUTS : 
-                            String configDirectory - Directory of a file containing n + 1 
-                                                     lines, where n is the number of elements 
-                                                     to be simulated. n is found on the first 
-                                                     line of the file. Each line contains the
-                                                     workload for the station at that index.
-                       RETURNS: VOID
+/*====================================== Private Methods ===================================*/
 
+/**
+* loads input config contained within a specified directory and creates the n
+* stations and conveyors detailed within.
+* @param configDirectory Directory of desired configFile
 */
     private void loadConfig(String configDirectory) {
         try {
@@ -79,7 +76,7 @@ public class Driver {
             Scanner scan = null;
             scan = new Scanner(configFile);
 
-            //------------ Create Stations/Conveyors ------------
+            //------------------ Create Stations/Conveyors ------------------//
             int numStations = scan.nextInt();
 
             for (int i = 0; i < numStations; i++) {
@@ -87,14 +84,14 @@ public class Driver {
                 conveyors.add(new Conveyor(i));
             }
 
-            //------------------ Configuration ------------------
+            //------------------------ Configuration ------------------------//
             Station currStation = null;
             Conveyor currInput = null;
             Conveyor currOutput = null;
             for (int i = 0; i < numStations; i++) {
                 currStation = stations.get(i);
-                currInput = conveyors.get(i);
-                currOutput = conveyors.get((i + numStations - 1) % numStations);
+                currOutput = conveyors.get(i);
+                currInput = conveyors.get((i + numStations - 1) % numStations);
 
                 currStation.setInput(currInput);
                 currStation.setOutput(currOutput);
@@ -107,6 +104,6 @@ public class Driver {
             System.out.println("Error reading config in " + configDirectory);
         }
     }
-//==================================== End Private Methods ===================================
+//==================================== End Private Methods =================================//
 }
 
