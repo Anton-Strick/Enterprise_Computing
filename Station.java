@@ -61,13 +61,17 @@ public Station (int id) {
 //==================================== End Public Methods ==================================//
 
 /*====================================== Private Methods =====================================
-        doWork - Main function. Attempts to aqcuire locks for input, THEN output to avoid
-                 gridlock. If output is locked by another station, input is unlocked and
-                 Thread sleeps for 0-200 nanos. Work times vary from 0-100 nanos.
+        doWork - Main function. 
                  INPUTS : VOID
                  RETURN : VOID
                  
 */
+
+/**
+ * Attempts to aqcuire locks for input, THEN output to avoid
+ * gridlock. If output is locked by another station, input is unlocked and
+ * Thread sleeps for 0-200 nanos. Work times vary from 0-100 nanos.
+ */
     private void doWork() {
         //-------------------------- Attempt Locks --------------------------//
         try {
@@ -103,7 +107,7 @@ public Station (int id) {
         catch (Exception ex) {
             System.out.println("Attempted to lock an already locked conveyor");
         }
-    } // End doWork()
+    }
     //================================= End Private Methods ================================//
     
     /*=================================== Helper Functions ===================================
@@ -113,8 +117,8 @@ public Station (int id) {
         - setX() functions are public instance functions which set the
           specified variable
 
-        - displayX() functions write messages to the std out. Some take a string
-          to allow important words to be specified.
+        - displayX() functions write messages to stdout (out.txt using launch.json). Some
+          take a string to allow important words to be specified.
     */
     public int getID() {
         return this.stationID;
@@ -175,6 +179,5 @@ public Station (int id) {
         System.out.println("Routing Station " + stationID + ": Number of package " 
         + "groups left to move is: " + workload + ".\n");
     }
-    //======================================================================================//
-
+    //================================ End Helper Functions ================================//
 }
