@@ -1,0 +1,24 @@
+{
+    "java.project.sourcePaths": [
+        "."
+    ],
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.base.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.controls.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.fxml.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.graphics.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.media.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.swing.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx.web.jar",
+        "c:\\Program Files\\Java\\javafx-sdk-16\\lib\\javafx-swt.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.base.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.controls.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.fxml.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.graphics.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.media.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.swing.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.web.jar",
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx-swt.jar"
+    ]
+}
