@@ -19,6 +19,7 @@
         "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.media.jar",
         "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.swing.jar",
         "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx.web.jar",
-        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx-swt.jar"
+        "c:\\Users\\Brackman\\Documents\\Dev_Kits\\javafx-sdk-16\\lib\\javafx-swt.jar",
+        "c:\\Program Files (x86)\\MySQL\\Connector J 8.0\\mysql-connector-java-8.0.25.jar"
     ]
 }
