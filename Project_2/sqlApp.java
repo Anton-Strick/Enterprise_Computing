@@ -14,7 +14,6 @@ package Project_2;
 
 import java.io.File;
 import java.io.FileInputStream;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -25,37 +24,26 @@ import javafx.stage.Stage;
 public class sqlApp extends Application {
 
     private Stage primaryStage;
-    private FlowPane mainLayout;
+
     public static void main(String args[]) {
         sqlApp.launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("SQL Application");
-        showSQLUI();
+        UIController uiControl = new UIController();
+
+        primaryStage.setScene(new Scene(uiControl));
+        primaryStage.setTitle("SQL Application");
+        primaryStage.show();
     }
 
-    private void showSQLUI() {
-        FXMLLoader loader = new FXMLLoader();
-        File sqlUI = new File("./Project_2/UI.fxml");
+    public void setUpdate() {
 
-        // Begin Attempt Load
-        try {
-            FileInputStream fxmlStream = new FileInputStream(sqlUI);
-            mainLayout = (FlowPane) loader.load(fxmlStream);
-            Scene scene = new Scene(mainLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
-        }
+    }
 
-        catch (Exception e) {
-            System.out.println("Error Loading FXML");
-            System.out.println(System.getProperty("user.dir"));
-            e.printStackTrace();
-            Platform.exit();
-        } // End Attempt Load
+    public void getUpdate() {
+
     }
 
 }
