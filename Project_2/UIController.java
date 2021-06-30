@@ -15,16 +15,22 @@ package Project_2;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 import javafx.scene.control.TextArea;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -42,7 +48,7 @@ public class UIController extends VBox {
     private sqlApp app;
 
     private ObservableList<String> databaseURLs = 
-                FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306");
+                FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306/project2");
 
     private ObservableList<String> drivers = 
                 FXCollections.observableArrayList("com.mysql.cj.jdbc.MysqlDataSource");
@@ -120,7 +126,9 @@ public class UIController extends VBox {
         dbStatusField.setText(clientDBManager.connectTo(selectDataBase.getValue(),
                                                         userNameField.getText(),
                                                         passwordField.getText()));
-
+        // Update connection
+        this.sqlClient = clientDBManager.getConnection();
+        this.dataSource = clientDBManager.getDatabase();
     }
 
     //============================ SQL Output Terminal ===========================//
@@ -146,11 +154,43 @@ public class UIController extends VBox {
 
     @FXML
     private void executeSQLCommand() {
-        data = FXCollections.observableArrayList();
+        //------------------------------- Read Query -----------------------------//
         String sqlQuery = sqlCommandArea.getText();
-
+        if (sqlQuery == null) {
+            return; // no Command
+        }
+        //------------------------------ Attempt Query ---------------------------//
+        data = FXCollections.observableArrayList(); // To be written to table
         try {
+            ResultSet results = this.sqlClient.createStatement().executeQuery(sqlQuery);
 
+            // Dynamically allocate column headers, see
+            // https://blog.ngopal.com.np/2011/10/19/dyanmic-tableview-data-from-database/
+            for (int i = 0; i < results.getMetaData().getColumnCount(); i++) {
+                final int j = i;
+                TableColumn col = 
+                    new TableColumn(results.getMetaData().getColumnName(i+1));
+                
+                col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(j).toString());
+                    }
+                });
+
+                sqlTableView.getColumns().addAll(col);
+            }
+
+            // Add resulting data to 'data'
+            while (results.next()) {
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for (int i = 1; i <= results.getMetaData().getColumnCount(); i++) {
+                    row.add(results.getString(i));
+                }
+                data.add(row);
+            }
+
+            // Post results to UI
+            sqlTableView.setItems(data);
         }
 
         catch (Exception e) {

@@ -117,4 +117,12 @@ public class DatabaseManager {
 
         }
     }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
+    public MysqlDataSource getDatabase() {
+        return this.database;
+    }
 }
