@@ -31,6 +31,20 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 
 public class UIController extends FlowPane {
 
+    private Connection sqlClient;
+
+    private MysqlDataSource dataSource;
+
+    private String[] creds = new String[4]; // Credentials for DB Connection
+
+    private ObservableList<String> databaseURLs = 
+                FXCollections.observableArrayList("jdbc:mysql/localhost/databaseName");
+
+    private ObservableList<String> drivers = 
+                FXCollections.observableArrayList("com.mysql.cj.jdbc.MysqlDataSource");
+
+    private ObservableList<ObservableList> data;
+
     public UIController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("UI.fxml"));
         fxmlLoader.setRoot(this);
@@ -53,18 +67,6 @@ public class UIController extends FlowPane {
 
         public int index() { return index; }
     }
-
-    private Connection sqlClient;
-
-    private String[] creds = new String[4]; // Credentials for DB Connection
-
-    private ObservableList<String> databases = 
-                FXCollections.observableArrayList("jdbc:mysql/localhost/databaseName");
-
-    private ObservableList<String> drivers = 
-                FXCollections.observableArrayList("com.mysql.cj.jdbc.MysqlDataSource");
-
-    private ObservableList<ObservableList> data;
 
     //========================== Database Information Pane =======================//
     @FXML
@@ -99,24 +101,17 @@ public class UIController extends FlowPane {
     private Button connectBtn;
     @FXML
     private void tryConnect() {
-        // Get credentials from info panel
-        this.creds[Credential.username.index()] 
-            = userNameField.getText();
-        this.creds[Credential.password.index()]
-            = passwordField.getText();
-        this.creds[Credential.driver.index()]
-            = selectDriver.getValue();
-        this.creds[Credential.database.index()]
-            = selectDataBase.getValue();
-
         try {
-            Class.forName(this.creds[Credential.driver.index()]);
+            Class.forName(selectDriver.getValue());
         }
         
         catch (ClassNotFoundException e) {
             e.printStackTrace();
-            System.out.println("Error loading driver: Does not Exist");
+            dbStatusField.setText("ERROR:  " + e.toString());
+            return;
         }
+
+        
     }
 
     //============================ SQL Output Terminal ===========================//
@@ -130,7 +125,7 @@ public class UIController extends FlowPane {
     @FXML
     private void initialize() {
         selectDriver.setItems(drivers);
-        selectDataBase.setItems(databases);
+        selectDataBase.setItems(databaseURLs);
         sqlCommandArea.setEditable(true);
         dbStatusField.setEditable(false);
     }
