@@ -30,9 +30,13 @@ import javafx.stage.Stage;
 
 public class sqlApp extends Application {
 
+    private String propertiesPath = "./Project_2/database.properties";
+
     private Stage primaryStage;
     private MysqlDataSource operationLogDB;
     private Connection operationLogConn;
+
+    private DatabaseManager operationLogManager;
 
     public static void main(String args[]) {
         sqlApp.launch(args);
@@ -46,8 +50,10 @@ public class sqlApp extends Application {
         primaryStage.setTitle("SQL Application");
         primaryStage.show();
 
-        System.out.println(connectTo(operationLogDB, operationLogConn, 
-                           "Project_2/database.properties"));
+        operationLogManager = 
+            new DatabaseManager(operationLogDB, operationLogConn);
+        
+        System.out.println(operationLogManager.connectTo(propertiesPath));
     }
 
     public void setUpdate() {
@@ -56,37 +62,5 @@ public class sqlApp extends Application {
 
     public void getUpdate() {
 
-    }
-
-    /**
-     * Attempts to establish a connection to the given database using the attached
-     * properties file 
-     * @param db the data source to be used
-     * @param path the path to the .properties file required
-     */
-    public String connectTo(MysqlDataSource db, Connection c, String path) {
-        Properties properties = new Properties();
-        FileInputStream propertiesFile;
-        try {
-            //--------------------- Load Properties File --------------------//
-            propertiesFile = new FileInputStream(path);
-            properties.load(propertiesFile);
-            propertiesFile.close();
-
-            //--------------------- Configure DataSource --------------------//
-            db = new MysqlDataSource();
-            
-            db.setURL(properties.getProperty("MYSQL_DB_URL"));
-            db.setUser(properties.getProperty("MYSQL_USERNAME"));
-            db.setPassword(properties.getProperty("MYSQL_PASSWORD"));
-
-            //-------------------- Connect to DataSource --------------------//
-            c = db.getConnection();
-            return "SUCCESS: CONNECTED TO " + db.getUrl();
-        }
-
-        catch (Exception e) {
-            return "ERROR:  " + e.toString();
-        }
     }
 }

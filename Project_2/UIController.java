@@ -31,14 +31,18 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 
 public class UIController extends FlowPane {
 
+    private DatabaseManager clientDBManager;
+
     private Connection sqlClient;
 
     private MysqlDataSource dataSource;
 
     private String[] creds = new String[4]; // Credentials for DB Connection
 
+    private sqlApp app;
+
     private ObservableList<String> databaseURLs = 
-                FXCollections.observableArrayList("jdbc:mysql/localhost/databaseName");
+                FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306");
 
     private ObservableList<String> drivers = 
                 FXCollections.observableArrayList("com.mysql.cj.jdbc.MysqlDataSource");
@@ -56,6 +60,8 @@ public class UIController extends FlowPane {
         catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        clientDBManager = new DatabaseManager(dataSource, sqlClient);
     }
 
     private enum Credential {
@@ -111,7 +117,10 @@ public class UIController extends FlowPane {
             return;
         }
 
-        
+        dbStatusField.setText(clientDBManager.connectTo(selectDataBase.getValue(),
+                                                        userNameField.getText(),
+                                                        passwordField.getText()));
+
     }
 
     //============================ SQL Output Terminal ===========================//
