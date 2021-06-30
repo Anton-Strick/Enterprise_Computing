@@ -43,16 +43,16 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="550.0" prefWidth="820.0" type="FlowPane" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="378.0" prefWidth="528.0" type="VBox" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane dividerPositions="0.5611246943765281" prefHeight="230.0" prefWidth="820.0">
-        <items>
-          <AnchorPane maxWidth="800.0" minHeight="0.0" minWidth="0.0" prefHeight="228.0" prefWidth="423.0">
+      <SplitPane dividerPositions="0.5" minHeight="200.0" VBox.vgrow="SOMETIMES">
+         <items>
+            <AnchorPane maxWidth="-Infinity" minHeight="0.0" minWidth="450.0" prefWidth="450.0">
                <children>
                   <Label alignment="TOP_LEFT" layoutX="20.0" layoutY="14.0" prefHeight="26.0" prefWidth="421.0" text="Enter Database Information" underline="true">
                      <font>
@@ -101,7 +101,7 @@
                   </TextField>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="178.0" prefWidth="540.0">
+            <AnchorPane minHeight="0.0" minWidth="300.0">
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" layoutX="36.0" prefHeight="39.0" prefWidth="278.0" text="Enter A SQL Command" underline="true" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="37.0">
                      <font>
@@ -113,20 +113,20 @@
                   <Button fx:id="executeCommandBtn" layoutX="250.0" layoutY="180.0" mnemonicParsing="false" onAction="#executeSQLCommand" prefHeight="40.0" prefWidth="80.0" text="Execute" AnchorPane.bottomAnchor="6.0" AnchorPane.rightAnchor="40.0" />
                </children>
             </AnchorPane>
-        </items>
+         </items>
       </SplitPane>
-      <GridPane prefHeight="60.0" prefWidth="820.0">
-        <columnConstraints>
-          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="150.0" />
-          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
-            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="542.0" minWidth="10.0" prefWidth="542.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="60.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <GridPane prefHeight="60.0" VBox.vgrow="SOMETIMES">
+         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="150.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="10.0" prefWidth="150.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="60.0" prefHeight="60.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
             <Button fx:id="connectBtn" alignment="CENTER" mnemonicParsing="false" onAction="#tryConnect" prefHeight="45.0" prefWidth="120.0" text="Connect to Database" textAlignment="CENTER" wrapText="true" />
-            <TextField fx:id="dbStatusField" prefHeight="35.0" text="No Connection..." GridPane.columnIndex="2">
+            <TextField fx:id="dbStatusField" editable="false" prefHeight="35.0" text="No Connection..." GridPane.columnIndex="2">
                <GridPane.margin>
                   <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
                </GridPane.margin>
@@ -138,15 +138,15 @@
             </Label>
          </children>
       </GridPane>
-      <TitledPane animated="false" prefHeight="260.0" prefWidth="820.0" text="SQL Execution Result Window">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
+      <TitledPane animated="false" text="SQL Execution Result Window" VBox.vgrow="ALWAYS">
+         <content>
+            <AnchorPane minHeight="125.0" minWidth="0.0">
                <children>
-                  <TableView fx:id="sqlTableView" layoutX="18.6" layoutY="19.6" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0" />
-                  <Button fx:id="clearTableBtn" layoutX="370.0" layoutY="195.0" mnemonicParsing="false" onAction="#clearQueryResults" text="Clear Query" AnchorPane.bottomAnchor="5.0" />
+                  <TableView fx:id="sqlTableView" layoutX="24.6" layoutY="19.6" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="0.0" />
+                  <Button fx:id="clearTableBtn" layoutX="14.0" layoutY="227.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#clearQueryResults" prefHeight="35.0" prefWidth="80.0" text="Clear Query" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" />
                </children>
             </AnchorPane>
-        </content>
+         </content>
       </TitledPane>
    </children>
 </fx:root>

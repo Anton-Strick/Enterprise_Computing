@@ -22,10 +22,7 @@ import java.util.Properties;
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
 public class sqlApp extends Application {
@@ -48,6 +45,8 @@ public class sqlApp extends Application {
 
         primaryStage.setScene(new Scene(uiControl));
         primaryStage.setTitle("SQL Application");
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(755);
         primaryStage.show();
 
         operationLogManager = 

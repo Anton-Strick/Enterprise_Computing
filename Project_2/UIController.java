@@ -24,12 +24,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.control.TextArea;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
-public class UIController extends FlowPane {
+public class UIController extends VBox {
 
     private DatabaseManager clientDBManager;
 
