@@ -43,10 +43,6 @@ public class UIController extends VBox {
 
     private MysqlDataSource dataSource;
 
-    private String[] creds = new String[4]; // Credentials for DB Connection
-
-    private sqlApp app;
-
     private ObservableList<String> databaseURLs = 
                 FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306/project2");
 
@@ -68,16 +64,6 @@ public class UIController extends VBox {
         }
 
         clientDBManager = new DatabaseManager(dataSource, sqlClient);
-    }
-
-    private enum Credential {
-        username(0), password(1), driver(2), database(3);
-
-        private final int index;
-        
-        private Credential(int index) { this.index = index; }
-
-        public int index() { return index; }
     }
 
     //========================== Database Information Pane =======================//

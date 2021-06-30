@@ -12,15 +12,8 @@ package Project_2;
                  and deliver information from a MySQL database to other classes.
 */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
-
 import com.mysql.cj.jdbc.MysqlDataSource;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -28,8 +21,6 @@ import javafx.stage.Stage;
 public class sqlApp extends Application {
 
     private String propertiesPath = "./Project_2/database.properties";
-
-    private Stage primaryStage;
     private MysqlDataSource operationLogDB;
     private Connection operationLogConn;
 
