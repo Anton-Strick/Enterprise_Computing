@@ -146,50 +146,69 @@ public class UIController extends VBox {
     @FXML
     private void executeSQLCommand() {
         //----------------------------- Read SQL Item ----------------------------//
-        String sqlQuery = sqlCommandArea.getText();
-        if (sqlQuery == null) {
+        String sql = sqlCommandArea.getText();
+        if (sql == null) {
             return; // no Command
         }
-        //------------------------------ Attempt Query ---------------------------//
-        data = FXCollections.observableArrayList(); // To be written to table
-        try {
-            ResultSet results = this.sqlClient.createStatement().executeQuery(sqlQuery);
 
-            // Dynamically allocate column headers, see
-            // https://blog.ngopal.com.np/2011/10/19/dyanmic-tableview-data-from-database/
-            for (int i = 0; i < results.getMetaData().getColumnCount(); i++) {
-                final int j = i;
-                TableColumn col = 
-                    new TableColumn(results.getMetaData().getColumnName(i+1));
-                
-                col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(j).toString());
-                    }
-                });
+        if (sql.contains("select")) {
+            //---------------------------- Attempt Query -------------------------//
+            data = FXCollections.observableArrayList(); // To be written to table
+            try {
+                ResultSet results = this.sqlClient.createStatement().executeQuery(sql);
 
-                sqlTableView.getColumns().addAll(col);
-            }
+/* Dynamically allocate column headers, see
+   https://blog.ngopal.com.np/2011/10/19/dyanmic-tableview-data-from-database/ */
+                for (int i = 0; i < results.getMetaData().getColumnCount(); i++) {
+                    final int j = i;
+                    TableColumn col = 
+                        new TableColumn(results.getMetaData().getColumnName(i+1));
+                    
+                    col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+                        public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                            return new SimpleStringProperty(param.getValue().get(j).toString());
+                        }
+                    });
 
-            // Add resulting data to 'data'
-            while (results.next()) {
-                ObservableList<String> row = FXCollections.observableArrayList();
-                for (int i = 1; i <= results.getMetaData().getColumnCount(); i++) {
-                    row.add(results.getString(i));
+                    sqlTableView.getColumns().addAll(col);
                 }
-                data.add(row);
+
+                // Add resulting data to 'data'
+                while (results.next()) {
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    for (int i = 1; i <= results.getMetaData().getColumnCount(); i++) {
+                        row.add(results.getString(i));
+                    }
+                    data.add(row);
+                }
+
+                // Post results to UI
+                sqlTableView.setItems(data);
             }
 
-            // Post results to UI
-            sqlTableView.setItems(data);
+            catch (Exception e) {
+                e.printStackTrace();
+                createPopup(e.toString());
+                System.out.println("ERROR: SQL QUERY FAIL");
+            }
         }
+        //---------------------------- End Attempt Query -------------------------//
 
-        catch (Exception e) {
-            e.printStackTrace();
-            createPopup(e.toString());
-            System.out.println("ERROR: SQL COMMAND FAIL");
+        else {
+            //------------------------ Attempt SQL Command -----------------------//
+            try {
+                String message = "Updated " +
+                this.sqlClient.createStatement().executeUpdate(sql) +
+                " rows!";
+                createPopup(message);
+            }
+            
+            catch (Exception e) {
+                e.printStackTrace();
+                createPopup(e.toString());
+                System.out.println("ERROR: SQL COMMAND FAIL");
+            }
         }
-
     }
 
     @FXML
