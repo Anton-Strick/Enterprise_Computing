@@ -113,10 +113,18 @@ public class UIController extends VBox {
             dbStatusField.setText("ERROR:  " + e.toString());
             return;
         }
-
         dbStatusField.setText(clientDBManager.connectTo(selectDataBase.getValue(),
                                                         userNameField.getText(),
                                                         passwordField.getText()));
+                    
+        if (dbStatusField.getText().contains("SUCCESS")) {
+            dbStatusField.setStyle("-fx-text-inner-color: green");
+        }
+
+        else {
+            dbStatusField.setStyle("-fx-text-inner-color: red");
+        }
+        
         // Update connection
         this.sqlClient = clientDBManager.getConnection();
         this.dataSource = clientDBManager.getDatabase();
