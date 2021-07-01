@@ -23,13 +23,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.TextArea;
 
@@ -140,7 +145,7 @@ public class UIController extends VBox {
 
     @FXML
     private void executeSQLCommand() {
-        //------------------------------- Read Query -----------------------------//
+        //----------------------------- Read SQL Item ----------------------------//
         String sqlQuery = sqlCommandArea.getText();
         if (sqlQuery == null) {
             return; // no Command
@@ -181,6 +186,7 @@ public class UIController extends VBox {
 
         catch (Exception e) {
             e.printStackTrace();
+            createPopup(e.toString());
             System.out.println("ERROR: SQL COMMAND FAIL");
         }
 
@@ -189,5 +195,22 @@ public class UIController extends VBox {
     @FXML
     private void clearQueryResults() {
         sqlTableView.getItems().clear();
+    }
+
+    private void createPopup(String message) {
+        VBox popupContent = new VBox();
+        popupContent.setAlignment(Pos.CENTER);
+        popupContent.getChildren().add(new Label("ERROR"));
+        TextArea errorMessage = new TextArea(message);
+        errorMessage.setWrapText(true);
+        errorMessage.setMinWidth(180);
+        errorMessage.setPadding(new Insets(10));
+        errorMessage.setEditable(false);
+        popupContent.getChildren().add(errorMessage);
+        popupContent.setMinWidth(200);
+        Stage popup = new Stage();
+        popup.setScene(new Scene(popupContent));
+        popup.setTitle("SQL Error Output");
+        popup.show();
     }
 }
