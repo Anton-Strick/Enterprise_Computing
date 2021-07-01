@@ -12,19 +12,11 @@ package Project_2;
                  and deliver information from a MySQL database to other classes.
 */
 
-import java.sql.Connection;
-import com.mysql.cj.jdbc.MysqlDataSource;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class sqlApp extends Application {
-
-    private String propertiesPath = "./Project_2/database.properties";
-    private MysqlDataSource operationLogDB;
-    private Connection operationLogConn;
-
-    private DatabaseManager operationLogManager;
 
     public static void main(String args[]) {
         sqlApp.launch(args);
@@ -39,18 +31,5 @@ public class sqlApp extends Application {
         primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(755);
         primaryStage.show();
-
-        operationLogManager = 
-            new DatabaseManager(operationLogDB, operationLogConn);
-        
-        System.out.println(operationLogManager.connectTo(propertiesPath));
-    }
-
-    public void setUpdate() {
-
-    }
-
-    public void getUpdate() {
-
     }
 }

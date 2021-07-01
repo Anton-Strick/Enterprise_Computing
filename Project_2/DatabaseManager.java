@@ -6,7 +6,7 @@ package Project_2;
                                   MySQL and JDBC
     Date: June 27, 2021
 
-    Class: UIController
+    Class: DatabaseManager.java
     Description: Contains the elementIDs and functions used by the javaFX UI
                  Designed using Scene Builder. Is used by sqlApp.java to report
                  user inputs, and receives information via string from sqlApp
@@ -15,24 +15,19 @@ package Project_2;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
 public class DatabaseManager {
-    private MysqlDataSource database;
-    private Connection connection;
+    private final String propertiesPath = "./Project_2/database.properties";
 
-    public DatabaseManager(MysqlDataSource db, Connection c) {
-        this.setDatabase(db);
-        this.setConnection(c);
-    }
+    private MysqlDataSource operationsLog;
+    private Connection logConnection;
 
     public DatabaseManager() {
-        // Generic Constructor
+        this.operationsLog = new MysqlDataSource();
     }
-
 
     /**
      * Attempts to establish a connection to the given database using the attached
@@ -49,80 +44,68 @@ public class DatabaseManager {
             propertiesFile.close();
 
             //--------------------- Configure DataSource --------------------//
-            database.setURL(properties.getProperty("MYSQL_DB_URL"));
-            database.setUser(properties.getProperty("MYSQL_USERNAME"));
-            database.setPassword(properties.getProperty("MYSQL_PASSWORD"));
+            operationsLog.setURL(properties.getProperty("MYSQL_DB_URL"));
+            operationsLog.setUser(properties.getProperty("MYSQL_USERNAME"));
+            operationsLog.setPassword(properties.getProperty("MYSQL_PASSWORD"));
 
             //-------------------- Connect to DataSource --------------------//
-            this.connection = database.getConnection();
-            return "SUCCESS: CONNECTED TO " + database.getUrl();
+            logConnection = operationsLog.getConnection();
+            return "SUCCESS: CONNECTED TO " + operationsLog.getUrl();
         }
 
         catch (Exception e) {
             return "ERROR:  " + e.toString();
         }
-    }
-
-    /**
-     * Attampts to connect to a database using the following parameters
-     * @param url URL to the desired database
-     * @param user username to be used to connect to the database
-     * @param password password associated with the username passed
-     * @return either a SUCCESS with the connected database, or an ERROR with
-     *         the exception's string
-     */
-    public String connectTo(String url, String user, String password) {
-        this.database.setURL(url);
-        database.setUser(user);
-        database.setPassword(password);
-
-        try {
-            this.connection = database.getConnection();
-            return "SUCCESS:  CONNECTED TO " + database.getUrl();
-        }
-
-        catch (SQLException e) {
-            e.printStackTrace();
-            return "ERROR:  " + e.toString();
-        }
-
-        catch (Exception e) {
-            e.printStackTrace();
-            return "ERROR: " + e.toString();
-        }
-    }
-
-    /**
-     * Sets the passed database as this manager's database
-     * @param db any MysqlDataSource, will be initialized if null
-     */
-    public void setDatabase(MysqlDataSource db) {
-        if (db == null)
-            db = new MysqlDataSource();
-        
-        this.database = db;
-    }
-
-    public void setConnection(Connection c) {
-        if (this.connection != null)
-            this.closeConnection();
-        this.connection = c;
     }
 
     public void closeConnection() {
-        if (this.connection == null)
+        if (logConnection == null)
             return; // No active connection
-
+        
         else {
+            try {
+                if (logConnection.isClosed())
+                    return; // Already Closed
 
+                logConnection.close();
+            }
+            catch (Exception e) {}
         }
     }
 
-    public Connection getConnection() {
-        return this.connection;
+    public void setUpdate() {
+        if (this.connectTo(propertiesPath).contains("SUCCESS")) {
+            try {
+                logConnection.createStatement().executeUpdate(
+                    "UPDATE operationscount " +
+                    "SET num_updates = num_updates + 1;"
+                );
+            }
+
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            closeConnection();
+        }
+
+        else System.out.println(this.connectTo(propertiesPath));
     }
 
-    public MysqlDataSource getDatabase() {
-        return this.database;
+    public void setQuery() {
+        if (this.connectTo(propertiesPath).contains("SUCCESS")) {
+            try {
+                logConnection.createStatement().executeUpdate(
+                    "UPDATE operationscount " +
+                    "SET num_queries = num_queries + 1;"
+                );
+            }
+
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+            closeConnection();
+        }
+        else System.out.println(this.connectTo(propertiesPath));
     }
 }

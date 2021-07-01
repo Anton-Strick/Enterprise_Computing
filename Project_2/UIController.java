@@ -16,6 +16,7 @@ package Project_2;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -43,10 +44,9 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 public class UIController extends VBox {
 
     private DatabaseManager clientDBManager;
-
     private Connection sqlClient;
-
     private MysqlDataSource dataSource;
+    private boolean isConnected = false;
 
     private ObservableList<String> databaseURLs = 
                 FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306/project2");
@@ -68,7 +68,7 @@ public class UIController extends VBox {
             throw new RuntimeException(exception);
         }
 
-        clientDBManager = new DatabaseManager(dataSource, sqlClient);
+        clientDBManager = new DatabaseManager();
     }
 
     //========================== Database Information Pane =======================//
@@ -113,21 +113,18 @@ public class UIController extends VBox {
             dbStatusField.setText("ERROR:  " + e.toString());
             return;
         }
-        dbStatusField.setText(clientDBManager.connectTo(selectDataBase.getValue(),
-                                                        userNameField.getText(),
-                                                        passwordField.getText()));
+        dbStatusField.setText(connectTo(selectDataBase.getValue(),
+                                        userNameField.getText(),
+                                        passwordField.getText()));
                     
         if (dbStatusField.getText().contains("SUCCESS")) {
             dbStatusField.setStyle("-fx-text-inner-color: green");
+            this.isConnected = true;
         }
 
         else {
             dbStatusField.setStyle("-fx-text-inner-color: red");
         }
-        
-        // Update connection
-        this.sqlClient = clientDBManager.getConnection();
-        this.dataSource = clientDBManager.getDatabase();
     }
 
     //============================ SQL Output Terminal ===========================//
@@ -153,6 +150,12 @@ public class UIController extends VBox {
 
     @FXML
     private void executeSQLCommand() {
+        
+        if (!isConnected) {
+            createPopup("No active connection!");
+            return;
+        }
+
         //----------------------------- Read SQL Item ----------------------------//
         String sql = sqlCommandArea.getText();
         if (sql == null) {
@@ -181,7 +184,7 @@ public class UIController extends VBox {
                     sqlTableView.getColumns().addAll(col);
                 }
 
-                // Add resulting data to 'data'
+                // Add resulting rows to data
                 while (results.next()) {
                     ObservableList<String> row = FXCollections.observableArrayList();
                     for (int i = 1; i <= results.getMetaData().getColumnCount(); i++) {
@@ -190,8 +193,9 @@ public class UIController extends VBox {
                     data.add(row);
                 }
 
-                // Post results to UI
+                // Post results to UI and update log
                 sqlTableView.setItems(data);
+                clientDBManager.setQuery();
             }
 
             catch (Exception e) {
@@ -203,12 +207,13 @@ public class UIController extends VBox {
         //---------------------------- End Attempt Query -------------------------//
 
         else {
-            //------------------------ Attempt SQL Command -----------------------//
+        //-------------------------- Attempt SQL Command -------------------------//
             try {
                 String message = "Updated " +
                 this.sqlClient.createStatement().executeUpdate(sql) +
                 " rows!";
                 createPopup(message);
+                clientDBManager.setUpdate();
             }
             
             catch (Exception e) {
@@ -217,6 +222,7 @@ public class UIController extends VBox {
                 System.out.println("ERROR: SQL COMMAND FAIL");
             }
         }
+        //-------------------------- End Attempt SQL Command --------------------//
     }
 
     @FXML
@@ -239,5 +245,37 @@ public class UIController extends VBox {
         popup.setScene(new Scene(popupContent));
         popup.setTitle("SQL Error Output");
         popup.show();
+    }
+
+    /**
+     * Attampts to connect to a database using the following parameters
+     * @param url URL to the desired database
+     * @param user username to be used to connect to the database
+     * @param password password associated with the username passed
+     * @return either a SUCCESS with the connected database, or an ERROR with
+     *         the exception's string
+     */
+    public String connectTo(String url, String user, String password) {
+        if (dataSource == null)
+            dataSource = new MysqlDataSource();
+        
+        dataSource.setURL(url);
+        dataSource.setUser(user);
+        dataSource.setPassword(password);
+
+        try {
+            sqlClient = dataSource.getConnection();
+            return "SUCCESS:  CONNECTED TO " + dataSource.getUrl();
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+            return "SQL ERROR:  " + e.toString();
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            return "Non-SQL ERROR: " + e.toString();
+        }
     }
 }
