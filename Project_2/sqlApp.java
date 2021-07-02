@@ -3,13 +3,13 @@ package Project_2;
 /*
     Name: J. Anton Strickland
     Course: CNT 4714 Summer 2021
-    Assignment title: Project 2 - Two-Tier Client-Server Application Development With
-                                  MySQL and JDBC
+    Assignment title: Project 2 - Two-Tier Client-Server Application Development
+                                  With MySQL and JDBC
     Date: June 27, 2021
 
     Class: sqlApp
-    Description: Contains initialization, back-end logic, and methods to retrieve
-                 and deliver information from a MySQL database to other classes.
+    Description: Contains initialization of a UI containing a simple MySQL
+                 command window, results pane, and credential entry.
 */
 
 import javafx.application.Application;

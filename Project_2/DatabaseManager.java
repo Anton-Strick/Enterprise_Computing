@@ -2,15 +2,15 @@ package Project_2;
 /*
     Name: J. Anton Strickland
     Course: CNT 4714 Summer 2021
-    Assignment title: Project 2 - Two-Tier Client-Server Application Development With
-                                  MySQL and JDBC
+    Assignment title: Project 2 - Two-Tier Client-Server Application Development
+                                  With MySQL and JDBC
     Date: June 27, 2021
 
     Class: DatabaseManager.java
-    Description: Contains the elementIDs and functions used by the javaFX UI
-                 Designed using Scene Builder. Is used by sqlApp.java to report
-                 user inputs, and receives information via string from sqlApp
-                 to display in UI windows.
+    Description: Handles a single connection to a user defined database and 
+                 the shared operationlog database. Any queries or updates
+                 run through the manager by any instance to any database
+                 are automatically logged.
 */
 
 import java.io.FileInputStream;
@@ -30,14 +30,18 @@ public class DatabaseManager {
     private MysqlDataSource clientDataSource;
     private Connection clientConnection;
 
+    /**
+     * Handles a single connection to a user defined database and 
+     * the shared operationlog database.
+     */
     public DatabaseManager() {
         this.operationsLog = new MysqlDataSource();
         this.clientDataSource = new MysqlDataSource();
     }
 
     /**
-     * Attempts to establish a connection to the given database using the attached
-     * properties file 
+     * Attempts to establish a connection to an operations log using the
+     * properties file at the provided path
      * @param path the path to the .properties file required
      */
     private String connectToLog(String path) {
@@ -64,7 +68,11 @@ public class DatabaseManager {
         }
     }
 
-    public void closeConnection() {
+    /**
+     * Closes the manager's connection to the log. If no log is open
+     * no action is taken.
+     */
+    private void closeLogConnection() {
         if (logConnection == null)
             return; // No active connection
         
@@ -75,21 +83,48 @@ public class DatabaseManager {
 
                 logConnection.close();
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
+    /**
+     * Closes the client connection. If no connection is open, no
+     * action is taken.
+     */
+    public void closeConnection() {
+        if (clientConnection == null)
+            return; // No active connection
+        
+        else {
+            try {
+                if (clientConnection.isClosed())
+                    return; // Already Closed
+
+                clientConnection.close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Opens a connection using the parameters given
+     * @param driver Name of a supported database driver
+     * @param url Valid database url
+     * @param username Registered username
+     * @param pass Registered password
+     * @throws Exception On failed connection throws relevant connection
+     */
     public void openConnection(String driver, String url,
                                String username, String pass) 
                                throws Exception {
         if (clientDataSource == null) 
             clientDataSource = new MysqlDataSource();
         
-        if (clientConnection != null) {
-            if (!clientConnection.isClosed()) {
-                clientConnection.close();
-            }
-        }
+        closeConnection();
         
         Class.forName(driver);
         clientDataSource.setURL(url);
@@ -99,6 +134,9 @@ public class DatabaseManager {
         clientConnection = clientDataSource.getConnection();
     }
 
+    /**
+     * Increments the number of updates in the operationslog
+     */
     private void setUpdate() {
         if (this.connectToLog(propertiesPath).contains("SUCCESS")) {
             try {
@@ -112,12 +150,15 @@ public class DatabaseManager {
                 e.printStackTrace();
             }
 
-            closeConnection();
+            closeLogConnection();
         }
 
         else System.out.println(this.connectToLog(propertiesPath));
     }
 
+    /**
+     * Increments the number of queries in the operationslog
+     */
     private void setQuery() {
         if (this.connectToLog(propertiesPath).contains("SUCCESS")) {
             try {
@@ -130,17 +171,29 @@ public class DatabaseManager {
             catch (Exception e) {
                 e.printStackTrace();
             }
-            closeConnection();
+            closeLogConnection();
         }
         else System.out.println(this.connectToLog(propertiesPath));
     }
 
+    /**
+     * Execute a query, operationslog will be updated accordingly
+     * @param sql String of MySQL query
+     * @return A resultset matching 'sql'
+     * @throws SQLException Any error arising from 'sql's execution
+     */
     public ResultSet manageQuery(String sql) throws SQLException {
         ResultSet out = clientConnection.createStatement().executeQuery(sql);
         setQuery();
         return out;
     }
 
+    /**
+     * Execute an update, operationslog will be updated accordingly
+     * @param sql String of MySQL command
+     * @return Integer count of the number of rows affected
+     * @throws SQLException Any error arising from 'sql's execution
+     */
     public int manageUpdate(String sql) throws SQLException {
         int out = clientConnection.createStatement().executeUpdate(sql);
         setUpdate();
