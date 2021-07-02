@@ -15,6 +15,8 @@ package Project_2;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -25,8 +27,12 @@ public class DatabaseManager {
     private MysqlDataSource operationsLog;
     private Connection logConnection;
 
+    private MysqlDataSource clientDataSource;
+    private Connection clientConnection;
+
     public DatabaseManager() {
         this.operationsLog = new MysqlDataSource();
+        this.clientDataSource = new MysqlDataSource();
     }
 
     /**
@@ -34,7 +40,7 @@ public class DatabaseManager {
      * properties file 
      * @param path the path to the .properties file required
      */
-    public String connectTo(String path) {
+    private String connectToLog(String path) {
         Properties properties = new Properties();
         FileInputStream propertiesFile;
         try {
@@ -73,8 +79,28 @@ public class DatabaseManager {
         }
     }
 
-    public void setUpdate() {
-        if (this.connectTo(propertiesPath).contains("SUCCESS")) {
+    public void openConnection(String driver, String url,
+                               String username, String pass) 
+                               throws Exception {
+        if (clientDataSource == null) 
+            clientDataSource = new MysqlDataSource();
+        
+        if (clientConnection != null) {
+            if (!clientConnection.isClosed()) {
+                clientConnection.close();
+            }
+        }
+        
+        Class.forName(driver);
+        clientDataSource.setURL(url);
+        clientDataSource.setUser(username);
+        clientDataSource.setPassword(pass);
+        
+        clientConnection = clientDataSource.getConnection();
+    }
+
+    private void setUpdate() {
+        if (this.connectToLog(propertiesPath).contains("SUCCESS")) {
             try {
                 logConnection.createStatement().executeUpdate(
                     "UPDATE operationscount " +
@@ -89,11 +115,11 @@ public class DatabaseManager {
             closeConnection();
         }
 
-        else System.out.println(this.connectTo(propertiesPath));
+        else System.out.println(this.connectToLog(propertiesPath));
     }
 
-    public void setQuery() {
-        if (this.connectTo(propertiesPath).contains("SUCCESS")) {
+    private void setQuery() {
+        if (this.connectToLog(propertiesPath).contains("SUCCESS")) {
             try {
                 logConnection.createStatement().executeUpdate(
                     "UPDATE operationscount " +
@@ -106,6 +132,18 @@ public class DatabaseManager {
             }
             closeConnection();
         }
-        else System.out.println(this.connectTo(propertiesPath));
+        else System.out.println(this.connectToLog(propertiesPath));
+    }
+
+    public ResultSet manageQuery(String sql) throws SQLException {
+        ResultSet out = clientConnection.createStatement().executeQuery(sql);
+        setQuery();
+        return out;
+    }
+
+    public int manageUpdate(String sql) throws SQLException {
+        int out = clientConnection.createStatement().executeUpdate(sql);
+        setUpdate();
+        return out;
     }
 }

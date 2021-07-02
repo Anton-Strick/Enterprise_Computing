@@ -17,4 +17,4 @@ from riders
 where nationality = "Holland"
 
 insert into riders values
-("annemeik van Vlueten", "Moviestar", "Holland", 88, "F")
+("Annemeik van Vlueten", "Moviestar", "Holland", 88, "F")

@@ -44,8 +44,6 @@ import com.mysql.cj.jdbc.MysqlDataSource;
 public class UIController extends VBox {
 
     private DatabaseManager clientDBManager;
-    private Connection sqlClient;
-    private MysqlDataSource dataSource;
     private boolean isConnected = false;
 
     private ObservableList<String> databaseURLs = 
@@ -105,25 +103,19 @@ public class UIController extends VBox {
     @FXML
     private void tryConnect() {
         try {
-            Class.forName(selectDriver.getValue());
-        }
-        
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            dbStatusField.setText("ERROR:  " + e.toString());
-            return;
-        }
-        dbStatusField.setText(connectTo(selectDataBase.getValue(),
-                                        userNameField.getText(),
-                                        passwordField.getText()));
-                    
-        if (dbStatusField.getText().contains("SUCCESS")) {
+            clientDBManager.openConnection(selectDriver.getValue(),
+                                           selectDataBase.getValue(),
+                                           userNameField.getText(),
+                                           passwordField.getText());
+            dbStatusField.setText("CONNECTED:  " + selectDataBase.getValue());
             dbStatusField.setStyle("-fx-text-inner-color: green");
             this.isConnected = true;
         }
-
-        else {
+        
+        catch (Exception e) {
+            dbStatusField.setText("UNCONNECTED");
             dbStatusField.setStyle("-fx-text-inner-color: red");
+            createPopup(e.toString());
         }
     }
 
@@ -141,6 +133,8 @@ public class UIController extends VBox {
         selectDataBase.setItems(databaseURLs);
         sqlCommandArea.setEditable(true);
         dbStatusField.setEditable(false);
+        dbStatusField.setText("UNCONNECTED");
+        dbStatusField.setStyle("-fx-text-inner-color: red");
     }
 
     @FXML
@@ -166,7 +160,7 @@ public class UIController extends VBox {
             //---------------------------- Attempt Query -------------------------//
             data = FXCollections.observableArrayList(); // To be written to table
             try {
-                ResultSet results = this.sqlClient.createStatement().executeQuery(sql);
+                ResultSet results = clientDBManager.manageQuery(sql);
 
 /* Dynamically allocate column headers, see
    https://blog.ngopal.com.np/2011/10/19/dyanmic-tableview-data-from-database/ */
@@ -195,7 +189,6 @@ public class UIController extends VBox {
 
                 // Post results to UI and update log
                 sqlTableView.setItems(data);
-                clientDBManager.setQuery();
             }
 
             catch (Exception e) {
@@ -210,10 +203,9 @@ public class UIController extends VBox {
         //-------------------------- Attempt SQL Command -------------------------//
             try {
                 String message = "Updated " +
-                this.sqlClient.createStatement().executeUpdate(sql) +
+                clientDBManager.manageUpdate(sql) +
                 " rows!";
                 createPopup(message);
-                clientDBManager.setUpdate();
             }
             
             catch (Exception e) {
@@ -245,37 +237,5 @@ public class UIController extends VBox {
         popup.setScene(new Scene(popupContent));
         popup.setTitle("SQL Error Output");
         popup.show();
-    }
-
-    /**
-     * Attampts to connect to a database using the following parameters
-     * @param url URL to the desired database
-     * @param user username to be used to connect to the database
-     * @param password password associated with the username passed
-     * @return either a SUCCESS with the connected database, or an ERROR with
-     *         the exception's string
-     */
-    public String connectTo(String url, String user, String password) {
-        if (dataSource == null)
-            dataSource = new MysqlDataSource();
-        
-        dataSource.setURL(url);
-        dataSource.setUser(user);
-        dataSource.setPassword(password);
-
-        try {
-            sqlClient = dataSource.getConnection();
-            return "SUCCESS:  CONNECTED TO " + dataSource.getUrl();
-        }
-
-        catch (SQLException e) {
-            e.printStackTrace();
-            return "SQL ERROR:  " + e.toString();
-        }
-
-        catch (Exception e) {
-            e.printStackTrace();
-            return "Non-SQL ERROR: " + e.toString();
-        }
     }
 }
