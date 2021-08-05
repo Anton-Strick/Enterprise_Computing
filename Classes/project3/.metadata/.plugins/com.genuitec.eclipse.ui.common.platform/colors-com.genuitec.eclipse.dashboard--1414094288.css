@@ -1,0 +1,70 @@
+.MPartStack.active > #myeclipse-dashboard > CTabItem,
+.MPartStack.active > #myeclipse-dashboard > CTabItem CLabel {
+background-color: #1c1f22;
+color: #f4f5f6;
+}
+.MPartStack.active > #myeclipse-dashboard > CTabItem:selected,
+.MPartStack.active > #myeclipse-dashboard > CTabItem:selected CLabel {
+color: '#org-eclipse-ui-workbench-ACTIVE_TAB_SELECTED_TEXT_COLOR';
+}
+
+.MPartStack.active.noFocus > #myeclipse-dashboard > CTabItem:selected {
+color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
+}
+
+
+
+#myeclipse-dashboard-parent Composite{ /*DARKONLY*/
+background-color: #1c1f22; /*DARKONLY*/
+} /*DARKONLY*/
+
+#myeclipse-dashboard-body Composite{ /*DARKONLY*/
+background-color: #1c1f22; /*DARKONLY*/
+} /*DARKONLY*/
+
+#myeclipse-dashboard-tabfolder CTabFolder{
+/* Set the styles for the inner tabs: */
+color: '#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
+swt-tab-renderer: url('bundleclass://com.genuitec.eclipse.theming.ui/com.genuitec.eclipse.theming.ui.rendering.DashboardSquareTabRenderer');
+padding: 0px 2px 2px;
+swt-tab-outline: #f4f5f6; /* border color for selected tab */
+swt-outer-keyline-color: #f4f5f6; /* border color for whole tabs container */
+swt-unselected-tabs-color: #1c1f22; /* title background for unselected tab */ /*DARKONLY*/
+swt-selected-tab-fill: #1c1f22; /* title background for selected tab */ /*DARKONLY*/
+swt-shadow-visible: false;
+swt-mru-visible: false;
+swt-simple: false;
+swt-unselected-hot-tab-color-background: #121516; /* Bug 465711 */
+}
+
+#myeclipse-dashboard-tabfolder CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
+swt-unselected-hot-tab-color-background: #121516; /* Bug 465711 */
+}
+
+#myeclipse-dashboard-tabfolder CTabItem,
+#myeclipse-dashboard-tabfolder CTabItem CLabel {
+background-color: #25292d; /*DARKONLY*/
+color: '#org-eclipse-ui-workbench-INACTIVE_TAB_UNSELECTED_TEXT_COLOR';
+}
+#myeclipse-dashboard-tabfolder CTabItem:selected,
+#myeclipse-dashboard-tabfolder CTabItem:selected CLabel {
+color: '#org-eclipse-ui-workbench-INACTIVE_TAB_SELECTED_TEXT_COLOR';
+}
+
+.MPartStack.active > #myeclipse-dashboard-tabfolder CTabItem,
+.MPartStack.active > #myeclipse-dashboard-tabfolder CTabItem CLabel {
+background-color: #1c1f22; /*DARKONLY*/
+color: #f4f5f6;
+}
+.MPartStack.active > #myeclipse-dashboard-tabfolder > CTabItem:selected,
+.MPartStack.active > #myeclipse-dashboard-tabfolder > CTabItem:selected CLabel {
+color: '#org-eclipse-ui-workbench-ACTIVE_TAB_SELECTED_TEXT_COLOR';
+}
+
+.MPartStack.active.noFocus > #myeclipse-dashboard-tabfolder > CTabItem:selected {
+color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
+}
+
+#myeclipse-dashboard-tabfolder > CTabItem.busy {
+color: #7b8993;
+}

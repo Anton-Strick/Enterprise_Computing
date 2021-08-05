@@ -1,0 +1,2 @@
+insert into shipments
+values ('S5', 'P6', 'J7', 400);

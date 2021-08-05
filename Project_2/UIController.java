@@ -43,7 +43,7 @@ public class UIController extends VBox {
     private boolean isConnected = false;
 
     private ObservableList<String> databaseURLs = 
-                FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306/project2");
+                FXCollections.observableArrayList("jdbc:mysql://127.0.0.1:3306/project3");
 
     private ObservableList<String> drivers = 
                 FXCollections.observableArrayList("com.mysql.cj.jdbc.MysqlDataSource");

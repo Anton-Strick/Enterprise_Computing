@@ -30,14 +30,7 @@ public class DatabaseManager {
         SET 
             status = status + 5
         WHERE
-            snum IN (SELECT DISTINCT
-                    snum
-                FROM
-                    shipments
-                        LEFT JOIN
-                    shipmentsBeforeUpdate USING (snum , pnum , jnum , quantity)
-                WHERE
-                    shipmentsBeforeUpdate.snum IS NULL)
+            snum =
             """;
     static int QUANTITY_COL = 1;
 
@@ -96,81 +89,35 @@ public class DatabaseManager {
     }
 
     /**
-     * Execute a query, operationslog will be updated accordingly
-     * @param sql String of MySQL query
-     * @return A resultset matching 'sql'
-     * @throws SQLException Any error arising from 'sql's execution
-     */
-    public String manageQuery(String sql) throws SQLException {
-        if (sql.contains("select"))
-            return selectQuery(sql);
-
-        return updateQuery(sql);
-    }
-
-    /**
      * Execute an update, operationslog will be updated accordingly
      * @param sql String of MySQL command
      * @return Integer count of the number of rows affected
      * @throws SQLException Any error arising from 'sql's execution
      */
-    private String updateQuery(String sql) throws SQLException {
-        return "Ran Update Query";
+    public int updateQuery(String sql) throws SQLException {
+        Statement statement = clientConnection.createStatement();
+        return statement.executeUpdate(sql);
     }
 
-    private String selectQuery(String sql) throws SQLException {
+    public ResultSet selectQuery(String sql) throws SQLException {
         Statement statement = clientConnection.createStatement();
         ResultSet sqlTable = statement.executeQuery(sql);
-        ResultSetMetaData tableMetaData = sqlTable.getMetaData();
+         
+        return sqlTable;
+    }
 
-        String output = 
-            """
-            <div class = \"container-fluid\">
-                <div class = \"row justify-content-center\">
-                    <div class = \"table-responsive-sm-10 table-responsive-md-10 table-responsive-lg-10\">
-                        <table class = \"table\">
-                            <thead class = \"thead-dark\">
-                                <tr>
-            """;
-        
-        for (int i = 1 ; i <= tableMetaData.getColumnCount() ; i++) {
-            output += "<th scope = \"col\">" + 
-                          tableMetaData.getColumnName(i) + 
-                      "</th>";
-        }
+    public int checkShipmentsOver(int value) throws SQLException {
+        Statement statement = clientConnection.createStatement();
+        String selectCountQuery = "select COUNT(*) from shipments where quantity >= ";
+        ResultSet tableOut = statement.executeQuery(selectCountQuery + value);
+        tableOut.next();
 
-        output += 
-        """
-                                </tr>
-                            </thead>
-                            <tbody>
-        """;
+        return tableOut.getInt(1);
+    }
 
-        while (sqlTable.next()) {
-            output += "<tr>";
-
-            for (int i = 1 ; i <= tableMetaData.getColumnCount() ; i++) {
-                if (i == 1) 
-                    output += "<th scope = \"row\">" +
-                                   sqlTable.getString(i) +
-                              "</th>";
-                else 
-                    output += "<td>" +
-                                   sqlTable.getString(i) +
-                              "</td>";
-            }
-            output += "</tr>";
-        }
-
-        output += 
-            """
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            """;
-        return output;
+    public int updateSupplierQuery(String suppliers) throws SQLException {
+        Statement statement = clientConnection.createStatement();
+        String query = updateSupplierQuery + suppliers;
+        return statement.executeUpdate(query);
     }
 }

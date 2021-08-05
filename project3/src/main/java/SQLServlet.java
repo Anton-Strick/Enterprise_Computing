@@ -23,8 +23,8 @@ import java.sql.Statement;
 @WebServlet("/SQLServlet")
 public class SQLServlet extends HttpServlet {
     
-    private Statement statement;
     private DatabaseManager database;
+    private htmlHandler handler;
 
     /**
      * Creates the required DBconnection using the init-params defined in 
@@ -33,6 +33,7 @@ public class SQLServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        this.handler = new htmlHandler();
         try {
             this.database = new DatabaseManager();
         }
@@ -58,18 +59,58 @@ public class SQLServlet extends HttpServlet {
         String output = "";
         HttpSession session = request.getSession();
         String sqlStatement = request.getParameter("sqlQuery");
-        session.setAttribute("results", output);
         session.setAttribute("sqlQuery", sqlStatement);
 
-        sqlStatement.trim().toLowerCase();
+        sqlStatement = sqlStatement.trim();
+        sqlStatement = sqlStatement.toUpperCase();
+
+        if (sqlStatement == "") sqlStatement = "select * from suppliers";
         
         try {
-            database.manageQuery(sqlStatement);
+            if (sqlStatement.contains("select")) {
+                ResultSet sqlTable = database.selectQuery(sqlStatement);
+                output = handler.generateHTMLTable(sqlTable);
+            }
+
+            else {
+                int shipmentsOver100PreUpdate = database.checkShipmentsOver(100);
+                int rowsUpdated = database.updateQuery(sqlStatement);
+                int shipmentsOver100PostUpdate = database.checkShipmentsOver(100);
+
+                if (shipmentsOver100PreUpdate < shipmentsOver100PostUpdate) {
+                    // Retrieve Parameters for comparison
+                    int startParamIndex = sqlStatement.indexOf("(");
+                    int lastParamIndex = sqlStatement.indexOf(")");
+                    String temp = sqlStatement.substring(startParamIndex + 1, lastParamIndex);
+                    temp = temp.replaceAll("'", "");
+                    temp = temp.replaceAll(" ", "");
+                    String[] params = temp.split(",");
+                    String supplierString = "";
+
+                    for (String param : params) {
+                        if (param.startsWith("S")) {
+                            supplierString +="'" + param + "'' OR ";
+                        }
+                    }
+                    if (supplierString.length() > 0) {
+                        supplierString = supplierString.substring(0, (supplierString.length() - 4));
+                        output = 
+                            handler.generateUpdateMessage(rowsUpdated, database.updateSupplierQuery(supplierString), sqlStatement);
+                    }
+                        
+                    else output = handler.generateUpdateMessage(rowsUpdated, sqlStatement);
+
+                    
+                } // End if Busness Logic Required.
+
+                else output = handler.generateUpdateMessage(rowsUpdated, sqlStatement);
+            }
+
         } catch (Exception e) {
-            output = "<span>" + e.getMessage() + "</span>";
+            output = handler.generateErrorMessage(e.getMessage(), sqlStatement);
             e.printStackTrace();
         }
-
+        session.setAttribute("results", output);
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
     }
@@ -88,109 +129,23 @@ public class SQLServlet extends HttpServlet {
         doGet(request, response);
     }
 
-    /**
-     * Runs the appropriate query based on the contents of the string
-     * 
-     * @param query The query in the form of a string
-     * @return The output of the MySQL Server
-     * @throws SQLException Any error that may be thrown by the server
-     */
-    private String runQuery(String query) throws SQLException {
-        if (query.contains("select")) {
-            return selectQuery(query);
-        }
-
-        else return updateQuery(query);
-    }
-
-    /**
-     * Runs a selection query on the attached database
-     * 
-     * @param query The query in the form of a string
-     * @return The output of the MySQL Server
-     * @throws SQLException Any error that may be thrown by the server
-     */
-    private String selectQuery(String query) throws SQLException {
-        ResultSet sqlTable = statement.executeQuery(query);
-        ResultSetMetaData tableMetaData = sqlTable.getMetaData();
-
-        String output = 
-            """
-            <div class = \"container-fluid\">
-                <div class = \"row justify-content-center\">
-                    <div class = \"table-responsive-sm-10 table-responsive-md-10 table-responsive-lg-10\">
-                        <table class = \"table\">
-                            <thead class = \"thead-dark\">
-                                <tr>
-            """;
-        
-        for (int i = 1 ; i <= tableMetaData.getColumnCount() ; i++) {
-            output += "<th scope = \"col\">" + 
-                          tableMetaData.getColumnName(i) + 
-                      "</th>";
-        }
-
-        output += 
-        """
-                                </tr>
-                            </thead>
-                            <tbody>
-        """;
-
-        while (sqlTable.next()) {
-            output += "<tr>";
-
-            for (int i = 1 ; i <= tableMetaData.getColumnCount() ; i++) {
-                if (i == 1) 
-                    output += "<th scope = \"row\">" +
-                                   sqlTable.getString(i) +
-                              "</th>";
-                else 
-                    output += "<td>" +
-                                   sqlTable.getString(i) +
-                              "</td>";
-            }
-            output += "</tr>";
-        }
-
-        output += 
-            """
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            """;
-        return output;
-    }
-
     private String updateQuery(String sql) throws SQLException {
         String output = null;
-        int shipmentsOver100PreUpdate = checkShipmentsOver(100);
+        
 
-        int numShipments = statement.executeUpdate(sql);
+        int numShipments = database.updateQuery(sql);
         output += "<div> The statement executed succesfully.</div><div>" +
                         numShipments +
                    " row(s) affected</div>";
 
-        int shipmentsOver100PostUpdate = checkShipmentsOver(100);
+        
 
-        if (shipmentsOver100PreUpdate < shipmentsOver100PostUpdate) {
+        
             output += "<div>Business Logic Detected! - Updating Supplier Status</div>";
             output += "<div>Business Logic Updated " + 
-                          statement.executeUpdate(sql) + 
+                          database.updateQuery(sql)  +
                       " Supplier(s) status marks</div>";
-        }
 
         return output;
-    }
-
-    private int checkShipmentsOver(int value) throws SQLException {
-        String selectCountQuery = "select COUNT(*) from shipments where quantity >= ";
-        ResultSet tableOut = statement.executeQuery(selectCountQuery + value);
-        tableOut.next();
-
-        return tableOut.getInt(1);
     }
 }

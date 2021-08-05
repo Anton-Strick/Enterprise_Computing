@@ -55,23 +55,21 @@
         </div>
     </section>
 
-    <section class = "page-section bg-primary">
+    <section class = "page-section bg-primary" style="text-align: -webkit-center;">
         <div class = "row-align-items-center justify-content-center text-center">
             <h1 class="text-white mt-0">Execution Results</h1>
         </div>
         <hr class="divider-light" />
-        <div class="col-lg-8 align-self-baseline">
-            <table>
-                <%
-                    String results = "";
-                    results = (String)session.getAttribute("results");
-                    PrintWriter mOut = response.getWriter();
-                    if (results == null) {
-                        results = "";
-                    }
-                %>
-                <%= results %>
-            </table>
+        <div class = "col-lg-8">
+            <%
+            String results = "";
+            results = (String)session.getAttribute("results");
+            PrintWriter mOut = response.getWriter();
+            if (results == null) {
+                results = "";
+            }
+            %>
+        <%= results %>
         </div>
     </section>
 

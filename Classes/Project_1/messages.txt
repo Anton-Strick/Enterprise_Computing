@@ -1,0 +1,13 @@
+12
+Routing Station X: Input connection is set to conveyor number Cn.
+Routing Station X: Output connection is set to conveyor number Cn.
+Routing Station X: Workload set. Station X has a total of n package groups to move.
+Station X: LOCK ACQUIRED! Now holding lock on input conveyor Cn.
+Station X: LOCK ACQUIRED! Now holding lock on output conveyor Cn.
+Station X: Unlocks input conveyor Cn.
+Station X: Unable to lock output conveyor Cm – releasing lock on input conveyor Cn.
+Station X: Unlocks output conveyor Cn
+Station X: . . . Active. . . moving packages into station on input conveyor Cn.
+Station X: . . .Active. . .moving packages packages out of station on output conveyor Cn.
+Station X: Number of packages groups left to move is: n.
+* * Station X: Workload successfully completed. * * Station Going Idle!
